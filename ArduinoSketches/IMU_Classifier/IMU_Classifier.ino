@@ -35,6 +35,11 @@ const int NUM_FEATURES_PER_SAMPLE = 6;
 const int TOTAL_SAMPLES = NUM_CAPTURED_SAMPLES_PER_GESTURE * NUM_FEATURES_PER_SAMPLE;
 const int THRESHOLD_SAMPLE_INDEX =  ((NUM_CAPTURED_SAMPLES_PER_GESTURE / 3) * NUM_FEATURES_PER_SAMPLE); // one-third of data comes before threshold
 
+const char* EMOJIS[] = {
+    u8"\U0001f44a",   // punch
+    u8"\U0001f4aa"    // flex 
+};
+
 int capturedSamples = 0;
 
 // global variables used for TensorFlow Lite (Micro)
@@ -167,9 +172,15 @@ void loop() {
 
   // Loop through the output tensor values from the model
   for (int i = 0; i < NUM_GESTURES; i++) {
-    Serial.print(GESTURES[i]);
-    Serial.print(": ");
-    Serial.println(tflOutputTensor->data.f[i], 6);
+    //Serial.print(GESTURES[i]);
+    //Serial.print(": ");
+    //Serial.println(tflOutputTensor->data.f[i], 6);
+    
+    // use emoji icons to indicate activity
+    if (tflOutputTensor->data.f[i] > 0.8) {
+        Serial.println(EMOJIS[i]);
+        Serial.println();
+    }
   }
   Serial.println();
 }
